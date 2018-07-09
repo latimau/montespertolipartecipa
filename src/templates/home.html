@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block jumbotron %}
+<!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+          <div class="row">
+              <div class="col-xs-6">
+                  <h1>Navbar example</h1>
+                    <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
+                    <p>To see the difference between static and fixed top navbars, just scroll.</p>
+                    <p>
+                      <a class="btn btn-lg btn-primary" href="" role="button">View navbar docs &raquo;</a>
+                    </p>
+              </div>
+              <div class="col-xs-6" style="background-color:black;height:300px">
+
+              </div>
+          </div>
+
+      </div>
+{% endblock %}
+
+ {% block content %}
+
+<div class="row">
+
+    <div class="col-xs-3 pull-right">
+        <p class="lead">Pagina test</p>
+        <form method="post" action="."> {% csrf_token %}
+            {{form|crispy}}
+            <input class="btn btn-primary" type="submit" value="Sign Up">
+        </form>
+    </div>
+    <div class="col-xs-3">
+        <p class="lead">First column</p>
+
+    </div>
+    <div class="col-xs-3">
+        <p class="lead">Second column</p>
+
+    </div>
+    <div class="col-xs-3">
+        <p class="lead">Third column</p>
+
+    </div>
+</div>
+
+
+ {% endblock %}

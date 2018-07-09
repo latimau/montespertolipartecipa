@@ -1,0 +1,53 @@
+{% extends 'base_new.html' %}
+{% load staticfiles %}
+
+{% block leaflet %}
+
+<div class="row">
+ <p>&nbsp;</p>
+    <div id="map" style="width: 100%; height: 500px" class="col-xs-12"></div>
+</div>
+
+<script>
+
+
+var map = L.map('map').setView([-37, 175], 4);
+
+
+var osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+
+var addressPoints = [[-41.5396,174.1242,'2300'],
+[-38.8725,175.9561],
+[-41.8992,174.3117],
+[-41.7495,174.02],
+[-41.7008,174.0876],
+[-41.7371,174.0682,'408'],
+[-41.372,173.3502,'565'],
+[-41.7511,174.0623,'531'],
+[-41.7557,174.3391,'871'],
+[-41.6881,174.2726,'336'],
+[-41.7463,174.1194,'113'],
+[-41.6966,174.1238,'168']];
+
+var heat = L.heatLayer(addressPoints,{
+            radius: 20,
+            blur: 15, 
+            maxZoom: 10,
+        }).addTo(map);
+
+
+L.control.layers({
+                'OSM':osm
+                //'MBOX':mapbox
+                },{
+                'Heatmap':heat
+                }).addTo(map);
+
+L.control.scale().addTo(map);
+
+</script>
+
+{% endblock %}

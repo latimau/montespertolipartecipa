@@ -1,0 +1,32 @@
+{% extends "base_new.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+	{% if messages %}
+        {% for message in messages %}
+
+        <div {% if message.tags == 'success'%} 
+                class="alert alert-success fade in alert-dismissable" 
+             {%else%}
+                class="alert alert-danger fade in alert-dismissable"
+              {%endif%}
+        style="margin-top:18px;">
+            <a class="close" href="#" data-dismiss="alert" aria-label="close" title="close">×</a>
+            {{ message }}
+        </div>
+        {%endfor%}
+        {% endif %}
+	
+	<div class='col-sm-6 col-sm-offset-3'>
+	<form method="post" action=".">
+	  {% csrf_token %}
+	  {{ user_form|crispy }}
+	  {{ profile_form|crispy }}
+	  <input class='btn btn-block btn-primary' type="submit" value="Aggiorna il profilo" />
+	</form>
+	</div>
+</div>
+
+{% endblock %}

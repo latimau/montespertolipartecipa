@@ -1,0 +1,98 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>MontespertoliPartecipa</title>
+
+	<!-- core CSS -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link href="{% static 'css/animate.min.css'%}" rel="stylesheet">
+    <link href="{% static 'css/prettyPhoto.css'%}" rel="stylesheet">
+    <link href="{% static 'css/main.css'%}" rel="stylesheet">
+    <link href="{% static 'css/responsive.css'%}" rel="stylesheet">
+
+    <!-- Leaflet CSS and JS -->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <link rel="stylesheet" href="{% static 'css/MarkerCluster.css'%}" />
+	<link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css'%}" />
+	<script src="{% static 'js/leaflet.markercluster-src.js'%}"></script>
+    <script src="{% static 'js/leaflet-heat.js'%}"></script>
+    <!-- End Leaflet-->
+
+    <!--[if lt IE 9]>
+    <script src="{% static 'js/html5shiv.js'%}"></script>
+    <script src="{% static 'js/respond.min.js'%}"></script>
+    <![endif]-->
+
+    <script>
+    window.cookieconsent_options = {
+        message : 'Questo sito utilizza cookie, per migliorare l\'esperienza utente. Chiudendo questo banner, cliccando al di fuori di esso o navigando su questo sito acconsenti all\'uso dei cookie. Per saperne di piu\' o negare il consenso &nbsp;',
+        dismiss: 'Ho capito',
+        learnMore: 'Leggi di piu\' > ',
+        theme: 'dark-bottom',
+        link: "{% url 'cookie'%}"
+    };
+
+
+
+
+    </script>
+    <script src="{% static 'js/cookieconsent.js'%}"></script>
+
+    <link rel="shortcut icon" href="{% static 'img/ico/favicon.png'%}">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{% static 'img/ico/apple-touch-icon-144.png'%}">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{% static 'img/ico/apple-touch-icon-114.png'%}">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{% static 'img/ico/apple-touch-icon-72.png'%}">
+    <link rel="apple-touch-icon-precomposed" href="{% static 'img/ico/apple-touch-icon-57.png'%}">
+</head><!--/head-->
+
+<body class="homepage">
+
+    <header id="header">
+
+
+    {% include 'navbar_new.html' with value=value %}
+
+    </header><!--/header-->
+
+    <div class="container">
+        {% block content %} {% endblock %}
+		{% block leaflet %} {% endblock %}
+	</div>
+
+
+            {% block progetto %} {% endblock %}
+
+
+    <section id="portfolio">
+        {%block segnalazioni%} {% endblock %}
+    </section><!--/#portfolio-item-->
+
+
+    {% include 'footer.html' %}
+
+    <script src="{% static 'js/jquery.js'%}"></script>
+    <script src="{% static 'js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'js/jquery.prettyPhoto.js'%}"></script>
+    <script src="{% static 'js/jquery.isotope.min.js'%}"></script>
+    <script src="{% static 'js/main.js'%}"></script>
+    <script src="{% static 'js/wow.min.js'%}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#id_birth_date").datepicker({ dateFormat: 'dd-mm-yy' });
+            window.setTimeout(function () {
+                $(".alert-success, alert-danger").fadeTo(500, 0).slideUp(500, function () {$(this).remove();
+                });
+                    }, 2000);
+        }); 
+    </script>
+</body>
+</html>

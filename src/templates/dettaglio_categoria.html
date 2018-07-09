@@ -1,0 +1,45 @@
+{% extends 'base_new.html' %}
+{% block content %}
+<section id="blog" class="container">
+    <div class="center">
+        <p>&nbsp;</p>
+        <h2>Segnalazioni per la categoria: {{categoria}}</h2>
+    </div>
+    <div class="blog">
+        <div class="row">
+            {% for item in query %}
+            <div class="col-md-8">
+                <div class="blog-item">
+                    {%if item.image%}
+                         <img class="img-responsive img-blog" src="{{server_immagini}}uploaded_images/big/{{item.image}}" width="30%" alt="" />
+                    {%endif%}
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-2 text-center">
+                                <div class="entry-meta">
+                                    <span id="publish_date">{{item.timestamp}}</span>
+                                    <span><i class="fa fa-user"></i> {{item.user}}</span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-10 blog-content">
+                                <h2><a href="{% url 'dettaglio_segnalazione' segnalazione_id=item.id %}">{{item.titolo_segnalazione}}</a></h2>
+
+                                <div class="post-tags">
+                                    <strong>Categoria segnalazione:</strong> {{categoria}}&nbsp;
+                                    <strong>Giudizio segnalazione:</strong> {{item.qualita_segnalazione}}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div><!--/.blog-item-->
+
+                </div><!--/.col-md-8-->
+            {% endfor %}
+
+
+        </div><!--/.row-->
+
+     </div><!--/.blog-->
+
+</section><!--/#blog-->
+
+{% endblock %}

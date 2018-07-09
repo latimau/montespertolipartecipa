@@ -1,0 +1,13 @@
+{% load i18n %}
+{% trans "Activate account at" %} {{ site.name }}:
+
+Benvenuto in MontespertoliPartecipa!
+
+Clicca il link per attivare la tua registazione:
+
+http://{{ site.domain }}{% url 'registration_activate' activation_key %}
+
+
+{% blocktrans %}Il link restera' valido per {{ expiration_days }} giorni.{% endblocktrans %}
+
+-Team MontespertoliPartecipa

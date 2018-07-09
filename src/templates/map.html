@@ -1,0 +1,304 @@
+{% extends 'base_new.html' %}
+{% load staticfiles %}
+
+{% block leaflet %}
+
+<div class="row">
+    {% if messages %}
+        {% for message in messages %}
+
+        <div {% if message.tags == 'success'%} 
+                class="alert alert-success fade in alert-dismissable" 
+             {%else%}
+                class="alert alert-danger fade in alert-dismissable"
+              {%endif%}
+        style="margin-top:18px;">
+            <a class="close" href="#" data-dismiss="alert" aria-label="close" title="close">×</a>
+            {{ message }}
+        </div>
+        {%endfor%}
+    {% endif %}
+    <p>&nbsp;</p>
+    <div id="map" style="width: 100%; height: 500px" class="col-xs-12"></div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <p>Clicca sulla segnalazione per vederne la descrizione e le immagini ad essa allegate</p>
+    </div>
+</div>
+
+<script src="{% static 'js/montespertoli_confine.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/symbols.js' %}" type="text/javascript"></script>
+<script>
+var geojsonFeature_decoro = {% autoescape off %}{{ featureCollection_decoro }}{% endautoescape %};
+var geojsonFeature_strada = {% autoescape off %}{{ featureCollection_strada }}{% endautoescape %};
+var geojsonFeature_sicurezza = {% autoescape off %}{{ featureCollection_sicurezza }}{% endautoescape %};
+var geojsonFeature_traffico = {% autoescape off %}{{ featureCollection_traffico }}{% endautoescape %};
+
+function onEachFeature(feature, layer) {
+    // does this feature have a property named popupContent?
+    if (feature.properties) {
+        if (feature.properties.image){
+                text = '<h3><a href="/dettaglio_segnalazione/'+feature.properties.id+'/">'+feature.properties.titolo_segnalazione+'</a></h3><p>'+feature.properties.desc_segnalazione+'</p><p><img src="'+feature.properties.image+'"></p>'
+            }else{
+               text = '<h3><a href="/dettaglio_segnalazione/'+feature.properties.id+'/">'+feature.properties.titolo_segnalazione+'</a></h3><p>'+feature.properties.desc_segnalazione+'</p>'
+            }
+        layer.bindPopup(text);
+    }
+    }
+
+var map = L.map('map').setView([43.64344, 11.07697], 12);
+
+
+var osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+var mapbox = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6IjZjNmRjNzk3ZmE2MTcwOTEwMGY0MzU3YjUzOWFmNWZhIn0.Y8bhBaUMqFiPrDRW9hieoQ', {
+			maxZoom: 18,
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+			id: 'mapbox.light'
+		});
+
+
+var confine_comunale = L.geoJson(Montespertoli,{
+        color:"black",
+        weight:3,
+        fillColor:"grey",
+        fillOpacity: .1}).addTo(map);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////CREAZIONE DEI PUNTI GEOJSON E ASSEGNAZIONE SIMBOLIZZAZIONE//////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var markers_decoro = new L.MarkerClusterGroup();
+var markers_strada = new L.MarkerClusterGroup();
+var markers_sicurezza = new L.MarkerClusterGroup();
+var markers_traffico = new L.MarkerClusterGroup();
+
+var punti_decoro = L.geoJson(geojsonFeature_decoro, {
+
+        pointToLayer: function (feature, latlng) {
+            if (feature.properties.qualita_segnalazione == 'positiva') {
+                var pippo = L.marker(latlng, {icon: decoro_verde});
+                return pippo;
+            }
+            if (feature.properties.qualita_segnalazione == 'negativa') {
+                return L.marker(latlng, {icon: decoro_rosso});
+            }
+            if (feature.properties.qualita_segnalazione == 'neutra') {
+                return L.marker(latlng, {icon: decoro_giallo});
+            }
+        },
+
+        onEachFeature: onEachFeature
+    });//.addTo(map);
+
+
+markers_decoro.addLayer(punti_decoro);
+map.addLayer(markers_decoro);
+
+
+
+
+var punti_strada = L.geoJson(geojsonFeature_strada, {
+
+    pointToLayer: function (feature, latlng) {
+        if (feature.properties.qualita_segnalazione == 'positiva') {
+            return L.marker(latlng, {icon: strada_verde});
+        }
+        if (feature.properties.qualita_segnalazione == 'negativa') {
+            return L.marker(latlng, {icon: strada_rosso});
+        }
+        if (feature.properties.qualita_segnalazione == 'neutra') {
+            return L.marker(latlng, {icon: strada_giallo});
+        }
+    },
+
+    onEachFeature: onEachFeature
+});//.addTo(map);
+
+markers_strada.addLayer(punti_strada);
+map.addLayer(markers_strada);
+
+var punti_sicurezza = L.geoJson(geojsonFeature_sicurezza, {
+
+    pointToLayer: function (feature, latlng) {
+        if (feature.properties.qualita_segnalazione == 'positiva') {
+            return L.marker(latlng, {icon: sicurezza_verde});
+        }
+        if (feature.properties.qualita_segnalazione == 'negativa') {
+            return L.marker(latlng, {icon: sicurezza_rosso});
+        }
+        if (feature.properties.qualita_segnalazione == 'neutra') {
+            return L.marker(latlng, {icon: sicurezza_giallo});
+        }
+    },
+
+    onEachFeature: onEachFeature
+});//.addTo(map);
+
+markers_sicurezza.addLayer(punti_sicurezza);
+map.addLayer(markers_sicurezza);
+
+var punti_traffico = L.geoJson(geojsonFeature_traffico, {
+
+    pointToLayer: function (feature, latlng) {
+        if (feature.properties.qualita_segnalazione == 'positiva') {
+            return L.marker(latlng, {icon: traffico_verde});
+        }
+        if (feature.properties.qualita_segnalazione == 'negativa') {
+            return L.marker(latlng, {icon: traffico_rosso});
+        }
+        if (feature.properties.qualita_segnalazione == 'neutra') {
+            return L.marker(latlng, {icon: traffico_giallo});
+        }
+    },
+
+    onEachFeature: onEachFeature
+});//.addTo(map);
+
+markers_traffico.addLayer(punti_traffico);
+map.addLayer(markers_traffico);
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////END CREAZIONE DEI PUNTI ////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/*L.control.layers({
+                'OSM':osm
+                //'MBOX':mapbox
+                },{
+                'Confine Comunale':confine_comunale,
+                'Decoro urbano':markers_decoro,
+                "Qualita'/Sicurezza stradale":markers_strada,
+                'Sicurezza del cittadino':markers_sicurezza,
+                'Traffico':markers_traffico
+                }).addTo(map);*/
+
+
+L.control.scale().addTo(map);
+var popup = L.popup();
+
+function onMapClick(e) {
+
+    alert(e.latlng.toString());
+    popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(map);
+}
+
+//map.on('click', onMapClick);
+
+</script>
+
+{% endblock %}
+
+{% block progetto %}
+<section id="feature" >
+<div class="container">
+
+    <div class="center">
+                <h2>Il progetto</h2>
+
+            </div>
+
+            <div class="row">
+                <div class="features">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="feature-wrap">
+                            <i class="fa fa-heart"></i>
+                            <h2>Teniamo al nostro territorio</h2>
+                            <p>Una mappa che vuole essere punto di partenza per segnalare i punti di forza ma anche di debolezza nel nostro territorio</p>
+                        </div>
+                    </div><!--/.col-md-4-->
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="feature-wrap">
+                            <a href="{% url 'inserimento' %}"><i class="fa fa-map-marker "></i></a>
+                            <h2>Contribuisci con le segnalazioni</h2>
+                            <p>Grazie alle segnalazioni possiamo contribuire a sensibilizzare la popolazione e le autorit&agrave; sui problemi percepiti dalla cittadinanza e quindi contribuire a migliorare il nostro terrotorio. &Egrave; necessario <a href ="{% url 'auth_login' %}">autenticarsi</a> al sito per inserire una segnalazione. <strong>Non saranno ammesse segnalazioni offensive o in qualunque modo contenenti elementi discriminatori o di razzismo.</strong></p>
+                        </div>
+                    </div><!--/.col-md-4-->
+
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="feature-wrap">
+                            <a href="{% url 'segnala_categoria' %}"><i class="fa fa-cogs"></i></a>
+                            <h2>Suggerisci nuove categorie</h2>
+                            <p>&Egrave; necessario <a href="{% url 'auth_login'%}">autenticarsi</a> al sito per richiedede una nuova categliria di segnalazione. La registrazione &egrave; totalmente gratuita.</p>
+                        </div>
+                    </div><!--/.col-md-4-->
+
+
+					<!--<div class="col-md-4 col-sm-6">
+                        <div class="feature-wrap">
+                            <i class="fa fa-paypal"></i>
+                            <h2>Sostieni il progetto</h2>
+                            <p>Aiutaci a mantenere il servizio attivo contribuendo con una piccola donazione....</p>
+                        </div>
+                    </div>/.col-md-4-->
+                </div><!--/.services-->
+            </div><!--/.row-->
+</div><!--/.container-->
+</section><!--/#feature-->
+{% endblock %}
+
+{% block segnalazioni %}
+{% if query_tot %}
+<div class="container">
+            <div class="center">
+               <h2>Segnalazioni piu' recenti</h2>
+            </div>
+
+             <ul class="portfolio-filter text-center">
+                <li><a class="btn btn-default active" href="#" data-filter="*">Ultime le segnalazioni</a></li>
+                <li><a class="btn btn-default" href="#" data-filter=".decoro">Decoro Urbano</a></li>
+                <li><a class="btn btn-default" href="#" data-filter=".strada">Qualita'/Sicurezza stradale</a></li>
+                <li><a class="btn btn-default" href="#" data-filter=".sicurezza">Sicurezza del cittadino</a></li>
+                <li><a class="btn btn-default" href="#" data-filter=".traffico">Traffico</a></li>
+            </ul><!--/#portfolio-filter-->
+
+            <div class="row">
+                <div class="portfolio-items">
+                    {% for item in query_tot %}
+                        {% if item.image %}
+                            <div class="portfolio-item {{item.tipo_segnalazione}} col-xs-12 col-sm-4 col-md-3">
+                                <div class="recent-work-wrap">
+                                    <img class="img-responsive" src="{{server_immagini}}{{item.image}}" alt="">
+                                    <div class="overlay">
+                                        <div class="recent-work-inner">
+                                            <h3><a href="{% url 'dettaglio_segnalazione' segnalazione_id=item.id %}">{{item.titolo_segnalazione}}</a></h3>
+                                            <!--<p>{{item.desc_segnalazione}}</p>-->
+                                            <a class="preview" href="{{server_immagini}}uploaded_images/big/{{item.image}}" rel="prettyPhoto"><i class="fa fa-eye"></i> View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--/.portfolio-item-->
+                        {%else%}
+                            <div class="portfolio-item {{item.tipo_segnalazione}} col-xs-12 col-sm-4 col-md-3">
+                                    <div class="recent-work-wrap">
+                                        <img class="img-responsive" src="{% static 'img/no_image.jpg'%}" alt="">
+                                        <div class="overlay">
+                                            <div class="recent-work-inner">
+                                                <h3><a href="{% url 'dettaglio_segnalazione' segnalazione_id=item.id %}">{{item.titolo_segnalazione}}</a></h3>
+                                                <!--<p>{{item.desc_segnalazione}}</p>
+                                                <a class="preview" href="{{server_immagini}}uploaded_images/big/{{item.image}}" rel="prettyPhoto"><i class="fa fa-eye"></i> View</a>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        {%endif%}
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base_new.html' %}
+{% load staticfiles %}
+{% block segnalazioni %}
+<div class="container">
+            <div class="center">
+               <h2>Segnalazioni</h2>
+            </div>
+
+             <ul class="portfolio-filter text-center">
+                <li><a class="btn btn-default active" href="#" data-filter="*">Tutte le segnalazioni</a></li>
+                <li><a class="btn btn-default" href="#" data-filter=".decoro">Decoro Urbano</a></li>
+                <li><a class="btn btn-default" href="#" data-filter=".strada">Qualita'/Sicurezza stradale</a></li>
+                <li><a class="btn btn-default" href="#" data-filter=".sicurezza">Sicurezza del cittadino</a></li>
+                <li><a class="btn btn-default" href="#" data-filter=".traffico">Traffico</a></li>
+            </ul><!--/#portfolio-filter-->
+
+            <div class="row">
+                <div class="portfolio-items">
+                    {% for item in query_tot %}
+                    {% if item.image %}
+                            <div class="portfolio-item {{item.tipo_segnalazione}} col-xs-12 col-sm-4 col-md-3">
+                                <div class="recent-work-wrap">
+                                    <img class="img-responsive" src="{{server_immagini}}{{item.image}}" alt="">
+                                    <div class="overlay">
+                                        <div class="recent-work-inner">
+                                            <h3><a href="{% url 'dettaglio_segnalazione' segnalazione_id=item.id %}">{{item.titolo_segnalazione}}</a></h3>
+                                            <!--<p>{{item.desc_segnalazione}}</p>-->
+                                            <a class="preview" href="{{server_immagini}}uploaded_images/big/{{item.image}}" rel="prettyPhoto"><i class="fa fa-eye"></i> View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--/.portfolio-item-->
+                        {%else%}
+                            <div class="portfolio-item {{item.tipo_segnalazione}} col-xs-12 col-sm-4 col-md-3">
+                                    <div class="recent-work-wrap">
+                                        <img class="img-responsive" src="{% static 'img/no_image.jpg'%}" alt="">
+                                        <div class="overlay">
+                                            <div class="recent-work-inner">
+                                                <h3><a href="{% url 'dettaglio_segnalazione' segnalazione_id=item.id %}">{{item.titolo_segnalazione}}</a></h3>
+                                                <!--<p>{{item.desc_segnalazione}}</p>
+                                                <a class="preview" href="{{server_immagini}}uploaded_images/big/{{item.image}}" rel="prettyPhoto"><i class="fa fa-eye"></i> View</a>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        {%endif%}
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+

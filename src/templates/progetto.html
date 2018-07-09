@@ -1,0 +1,17 @@
+{% extends 'base_new.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-10 col-xs-offset-1">
+     Descrizione del progetto qui....
+ 
+User authenticated : {{user.is_authenticated}}
+<br>{{user.username}}
+<br>{{user.is_superuser}}
+<br>{{user.is_active}}
+    </div>
+}
+}
+</div>
+
+{% endblock %}
